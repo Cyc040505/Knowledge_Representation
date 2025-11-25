@@ -1,12 +1,5 @@
 # Save Princess
 In this game, you play as a brave hero, freely exploring the map, defeating the dragon and rescuing the princess.
-### Directory Structure
-```
-- adventure-startercode.pl    
-- domain.1.pddl               
-- problem.1.pddl              
-- pyperplan_runner.pl         
-```
 
 ### Start Game
 - Install SWI-Prolog: https://www.swi-prolog.org/download/stable
@@ -23,11 +16,11 @@ and upgrade your equipment to complete the tasks.
 - **Adventurer's Hall:** This is your starting point. You can sell your loot here to earn gold coins.
 - **Market:** Here you can purchase consumables that restore health/hunger/thirsty.
 - **Weapon Shop:** Here you can purchase basic equipment and all the tools needed for the games.
-- **Forest:** 
-- **River:**
-- **Cave:** 
-- **Desert:**
-- **Dragon Castle:**
+- **Forest:** Here you may meet some random events, defeats monsters and get the loot.
+- **River:** This is the only safe place outside the city. Making a wish has a chance to trigger an elf event and obtain a special weapon.
+- **Cave:** Here you will fight against the giant bear guarding the treasure. After winning, you will be able to obtain special armor.
+- **Desert:** Here you will encounter some random events, and your health condition will be depleted more quickly.
+- **Dragon Castle:** There is a special item in the basement that can help you defeat the dragon and rescue the princess from the attic.
 
 ### Action Instructions
 ```

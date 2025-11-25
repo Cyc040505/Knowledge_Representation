@@ -476,7 +476,4 @@ help :-
 start :-
     write('Welcome to this world! Hero!'), nl,
     write('You start with 500 gold. Explore this world to your heart''s content!'), nl,
-    write('Type "help." for help.'), nl,
-    nl,
-    look,
-    status.
+    write('Type "help." for help.'), nl.
