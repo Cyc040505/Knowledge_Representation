@@ -1,6 +1,4 @@
 # Save Princess
-In this game, you play as a brave hero, freely exploring the map, defeating the dragon and rescuing the princess.
-
 ### Start Game
 - Install SWI-Prolog: https://www.swi-prolog.org/download/stable
 - Install Pyperplan: `pip install pyperplan`
@@ -24,5 +22,6 @@ and upgrade your equipment to complete the tasks.
 
 ### Action Instructions
 ```
+
 
 ```
