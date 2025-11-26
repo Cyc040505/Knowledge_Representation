@@ -4,6 +4,8 @@
 :- retractall(i_am_at(_)), retractall(item_count(_,_)).
 :- dynamic player_status/6, player_equipments/5.
 :- retractall(player_status(_,_,_,_,_,_)), retractall(player_equipments(_,_,_,_,_)).
+:- dynamic wish_count/1, got_crystal_sword/1.
+:- retractall(wish_count(_)), retractall(got_crystal_sword(_)).
 
 /* Initial player status: health, attack, defense, hunger, thirst, gold */
 player_status(100, 10, 5, 100, 100, 500).
@@ -68,6 +70,8 @@ describe(forest) :-
 describe(river) :-
     write('Crystal River: A very ancient river, with the protection of elf according to legend.'), nl,
     write('The water looks refreshing. Take a break here.'), nl,
+    write('I heard that if you throw 100 gold coins into the river, you can make a wish to the elves.'), nl,
+    write('But I''m not sure whether it''s true...'), nl,
     write('Exit west to Forest.').
 
 describe(cave) :-
@@ -151,11 +155,11 @@ item_info(iron_helmet, headgear, 50, 0, 10).
 item_info(iron_armor, armor, 40, 0, 10).
 item_info(iron_boot, footwear, 20, 0, 5).
 item_info(oil_lamp, tool, 10, 0, 0).
+item_info(crystal_sword, weapon, 0, 150, 0).
 
 item_info(apple, food, 4, 5, 5).                % name, type, price, hunger_restore, thirst_restore
 item_info(bread, food, 5, 10, 0).
 item_info(water, drink, 2, 0, 20).
-
 item_info(potion, health, 20, 25, 0).           % name, type, price, health_restore, none
 
 /* Item inventories */
@@ -170,6 +174,8 @@ shop_item(market, bread, 100).
 shop_item(market, water, 100).
 shop_item(market, potion, 100).
 
+shop_item(river, crystal_sword, 1).
+
 /* Shop item listing */
 list_shop_items(Shop) :-
     write('Available items:'), nl,
@@ -180,54 +186,76 @@ list_shop_items(Shop) :-
     fail.
 
 /* Buy items */
-buy(Item) :-
+buy(Item, Count) :-
+    integer(Count), Count > 0,
     i_am_at(Shop),
     (Shop = weapon_shop; Shop = market),
     shop_item(Shop, Item, Stock),
-    Stock > 0,
+    Stock >= Count,
     item_info(Item, _, Price, _, _),
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
-    Gold >= Price,
-    NewGold is Gold - Price,
-    NewStock is Stock - 1,
+    TotalPrice = Price * Count,
+    Gold >= TotalPrice,
+    NewGold is Gold - TotalPrice,
+    NewStock is Stock - Count,
     retract(shop_item(Shop, Item, Stock)),
     assert(shop_item(Shop, Item, NewStock)),
     retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
     assert(player_status(Health, Attack, Defense, Hunger, Thirst, NewGold)),
-    add_to_bag(Item),
-    write('You bought a '), write(Item), write(' for '), write(Price), write(' gold.'), nl,
+    add_to_bag(Item, Count),
+    write('You bought '), write(Count), write(' '), write(Item), write(' for '), write(TotalPrice), write(' gold.'), nl,
     !.
 
-buy(Item) :-
+buy(Item, Count) :-
+    integer(Count), Count > 0,
     i_am_at(Shop),
     (Shop = weapon_shop; Shop = market),
-    shop_item(Shop, Item, 0),
-    write('Oops! This item seems to have sold out.'), nl,
+    shop_item(Shop, Item, Stock),
+    Stock < Count,
+    (
+        Stock =:= 0
+        -> write('Oops! This item has been sold out.'), nl
+        ;  write('Not enough stock! Only '), write(Stock), write(Item), write('.'), nl
+    ),
     !.
 
-buy(Item) :-
+buy(Item, Count) :-
     i_am_at(Shop),
     (Shop = weapon_shop; Shop = market),
     item_info(Item, _, Price, _, _),
     player_status(_, _, _, _, _, Gold),
-    Gold < Price,
-    write('You don''t have enough gold! You need '), write(Price),
+    TotalPrice is Price * Count,
+    Gold < TotalPrice,
+    write('You don''t have enough gold! You need '), write(TotalPrice),
     write(' but only have '), write(Gold), write('.'), nl,
     !.
 
-buy(_) :-
+buy(_, Count) :-
+    integer(Count), Count =< 0,
+    write('Count must be a positive integer!'), nl,
+    !.
+
+buy(_, Count) :-
+    \+ integer(Count),
+    write('Count must be an integer!'), nl,
+    !.
+
+buy(_, _) :-
     write('It seems that there is no such item.'), nl.
 
+buy(Item) :- buy(Item, 1).
+
 /* Bag management */
-add_to_bag(Item) :-
-    item_count(Item, Count),
-    NewCount is Count + 1,
-    retract(item_count(Item, Count)),
+add_to_bag(Item, Count) :-
+    item_count(Item, CurrentCount),
+    NewCount is Count + CurrentCount,
+    retract(item_count(Item, CurrentCount)),
     assert(item_count(Item, NewCount)),
     !.
 
-add_to_bag(Item) :-
-    assert(item_count(Item, 1)).
+add_to_bag(Item, Count) :-
+    \+ item_count(Item, _),
+    assert(item_count(Item, Count)).
 
 /* Use Items */
 use(Item) :-
@@ -280,7 +308,16 @@ use_item_effect(Item, health, HealthRestore, _) :-
     write('You drink the '), write(Item), write(', Health restored by '), write(HealthRestore), nl.
 
 /* Equip items */
+equip(all) :-
+    !,
+    silent_unequip_all_slots([head, body, foot, right]),
+    (equip_best_weapon -> true ; write('There are no weapons available for equipment.'), nl),
+    (equip_best_armor(head, headgear) -> true ; write('There are no headgear available for equipment.'), nl),
+    (equip_best_armor(body, armor) -> true ; write('There are no armors available for equipment.'), nl),
+    (equip_best_armor(foot, footwear) -> true ; write('There are no footwear available for equipment.'), nl).
+
 equip(Item) :-
+    Item \= all,
     item_count(Item, Count),
     Count > 0,
     item_info(Item, Type, _, AttackBonus, DefenseBonus),
@@ -290,6 +327,7 @@ equip(Item) :-
     !.
 
 equip(Item) :-
+    Item \= all,
     item_count(Item, 0),
     write('You don''t have any '), write(Item), write(' left.'), nl.
 
@@ -336,6 +374,73 @@ equip_item(Item, _, Slot, AttackBonus, DefenseBonus) :-
     retract(item_count(Item, Count)),
     NewCount is Count - 1,
     (NewCount > 0 -> assert(item_count(Item, NewCount)) ; true).
+
+silent_unequip_all_slots([]).
+silent_unequip_all_slots([Slot|Slots]) :-
+    (has_equipment(Slot) -> unequip(Slot) ; true),
+    silent_unequip_all_slots(Slots).
+
+has_equipment(Slot) :-
+    get_current_equipped(Slot, Item),
+    Item \= null.
+
+equip_best_weapon :-
+    findall(Item-Attack,
+            (item_count(Item, Count),
+             Count > 0,
+             item_info(Item, weapon, _, Attack, _)),
+            Weapons),
+    Weapons \= [],
+    find_max_attack(Weapons, BestWeapon, MaxAttack),
+    equip(BestWeapon),
+    write('Equipped the best weapon: '), write(BestWeapon), write(' (Attack + '), write(MaxAttack), write(')'), nl.
+
+equip_best_weapon :-
+    fail.
+
+equip_best_armor(Slot, Type) :-
+    findall(Item-Defense,
+            (item_count(Item, Count),
+             Count > 0,
+             item_info(Item, Type, _, _, Defense)),
+            Armors),
+    Armors \= [],
+    find_max_defense(Armors, BestArmor, MaxDefense),
+    equip(BestArmor),
+    write('Equipped the best '), write(Type), write(': '), write(BestArmor),
+    write(' (Defense + '), write(MaxDefense), write(') -> '), write(Slot), nl.
+
+equip_best_armor(_, _) :-
+    fail.
+
+equip_quiet(Item) :-
+    item_count(Item, Count),
+    Count > 0,
+    item_info(Item, Type, _, AttackBonus, DefenseBonus),
+    can_equip_type(Type, Slot),
+    equip_item(Item, Type, Slot, AttackBonus, DefenseBonus),
+    !.
+
+equip_quiet(_) :-
+    fail.
+
+find_max_attack([Item-Attack], Item, Attack).
+find_max_attack([Item1-Attack1, Item2-Attack2|Rest], BestItem, BestAttack) :-
+    find_max_attack([Item2-Attack2|Rest], CurrentBest, CurrentAttack),
+    (Attack1 >= CurrentAttack ->
+        BestItem = Item1, BestAttack = Attack1
+    ;
+        BestItem = CurrentBest, BestAttack = CurrentAttack
+    ).
+
+find_max_defense([Item-Defense], Item, Defense).
+find_max_defense([Item1-Defense1, Item2-Defense2|Rest], BestItem, BestDefense) :-
+    find_max_defense([Item2-Defense2|Rest], CurrentBest, CurrentDefense),
+    (Defense1 >= CurrentDefense ->
+        BestItem = Item1, BestDefense = Defense1
+    ;
+        BestItem = CurrentBest, BestDefense = CurrentDefense
+    ).
 
 /* Unequip items */
 unequip(Slot) :-
@@ -452,7 +557,58 @@ print_inventory([Item-Count|Rest]) :-
     write(Item), write(' ('), write(Type), write(') - '), write(Count), nl,
     print_inventory(Rest).
 
+/* Wish to the elf */
+wish_count(0).
+wish :-
+    i_am_at(river),
+    write('You threw 100 gold coins into the river, hoping to receive a response from the elves.'), nl,
+    player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+    (Gold >= 100 ->
+        NewGold is Gold - 100,
+        retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
+        assert(player_status(Health, Attack, Defense, Hunger, Thirst, NewGold)),
 
+        wish_count(Count),
+        (Count >= 10 ->
+            write('You have made a wish ten times. The elf no longer responds to you.'), nl,
+            !
+        ;
+            (got_crystal_sword(true) ->
+                write('You have already received the protection of the elves and can no longer make wishes.'), nl,
+                !
+            ;
+                SuccessRate is 10 + Count * 10,
+                random(1, 101, RandomValue),
+                (RandomValue =< SuccessRate ->
+                    NewCount is Count + 1,
+                    retract(wish_count(Count)),
+                    assert(wish_count(NewCount)),
+                    (got_crystal_sword(_) ->
+                        retract(got_crystal_sword(_))
+                    ;
+                        true
+                    ),
+                    assert(got_crystal_sword(true)),
+                    add_to_bag(crystal_sword, 1),
+                    write('The elf has heard your wish! A flash of light passed, and you obtained the Crystal Sword!'), nl,
+                    write('Crystal Sword: Attack +150'), nl
+                ;
+                    NewCount is Count + 1,
+                    retract(wish_count(Count)),
+                    assert(wish_count(NewCount)),
+                    write('It seems nothing happened... You lost 100 gold.'), nl
+                )
+            )
+        )
+    ;
+        write('You need at least 100 gold to make a wish!'), nl
+    ),
+    !.
+
+wish :-
+    \+ i_am_at(river),
+    write('You can only make a wish at the river!'), nl,
+    !.
 
 /* Game instructions */
 help :-
@@ -462,11 +618,14 @@ help :-
     write('n. s. e. w. u. d.            - Move in directions'), nl,
     write('status.                      - Check your status'), nl,
     write('bag.                         - Check bag'), nl,
-    write('buy(Item).                   - Buy items in shops'), nl,
+    write('buy(Item, Count).            - Buy items in shops'), nl,
+    write('buy(Item).                   - Buy only one item in shops'), nl,
     write('use(Item).                   - Use consumable items'), nl,
     write('equip(Item).                 - equip weapon/armor/tool'), nl,
+    write('equip(all).                  - equip all the best weapon/armor'), nl,
     write('unequip(Slot).               - unequip weapon/armor/tool from slot'), nl,
     write('drink_river.                 - Drink from river (at river only)'), nl,
+    write('wish.                        - Wish to the elf (at river only)'), nl,
     write('look.                        - Look around'), nl,
     write('help.                        - Show these instructions'), nl,
     write('halt.                        - Quit game'), nl,

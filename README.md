@@ -1,4 +1,4 @@
-# Save Princess
+# Rescue the Princess
 ### Start Game
 - Install SWI-Prolog: https://www.swi-prolog.org/download/stable
 - Install Pyperplan: `pip install pyperplan`
@@ -22,6 +22,5 @@ and upgrade your equipment to complete the tasks.
 
 ### Action Instructions
 ```
-
 
 ```
