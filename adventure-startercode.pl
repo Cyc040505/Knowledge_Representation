@@ -4,8 +4,6 @@
 :- retractall(i_am_at(_)), retractall(item_count(_,_)).
 :- dynamic player_status/6, player_equipments/5.
 :- retractall(player_status(_,_,_,_,_,_)), retractall(player_equipments(_,_,_,_,_)).
-:- dynamic wish_count/1, got_crystal_sword/1.
-:- retractall(wish_count(_)), retractall(got_crystal_sword(_)).
 
 /* Initial player status: health, attack, defense, hunger, thirst, gold */
 player_status(100, 10, 5, 100, 100, 500).
@@ -38,13 +36,19 @@ path(river, west, forest).
 
 /* cave connections */
 path(cave, east, forest).
+path(cave, down, deep_cave).
+path(deep_cave, up, cave).
 
 /* desert connections */
 path(desert, north, forest).
-path(desert, south, dragon_castle).
+path(desert, south, castle_hall).
 
 /* dragon_castle connections */
-path(dragon_castle, north, desert).
+path(castle_hall, north, desert).
+path(castle_hall, up, attic).
+path(attic, down, castle_hall).
+path(castle_hall, down, basement).
+path(basement, up, castle_hall).
 
 /* Area descriptions */
 describe(adventurers_hall) :-
@@ -77,18 +81,35 @@ describe(river) :-
 describe(cave) :-
     write('Whispering Cave: A dark opening in the mountainside, cool air wafts from within.'), nl,
     write('Strange echoes can be heard from the depths. The sole source of light gave me a little bit of comfort.'), nl,
-    write('Exit east to Forest.').
+    write('Exit east to Forest. Use d. to explore the depths of the cave.').
+
+describe(deep_cave) :-
+    write('Wow! The minerals deep in the cave emitted a beautiful light.'), nl,
+    write('You see a treasure chest and are about to open it'), nl,
+    write('Breathing sounds came from behind. Oh no, it was a huge bear!').
 
 describe(desert) :-
     write('Scorching Desert: A vast expanse of golden sand under the scorching sun.'), nl,
     write('It will be a serious test on physical strength.'), nl,
     write('Exits lead: north to Forest, south to Dragon Castle'), nl.
 
-describe(dragon_castle) :-
+describe(castle_hall) :-
     write('Dragon Castle: The ancient dragon''s castle.'), nl,
     write('It is said that the power of the dragon is extremely strong.'), nl,
-    write('The princess must be trapped here.'), nl,
-    write('It seems there are stairs, leading respectively to the basement and the attic.'), nl.
+    write('The princess must be trapped in the attic.'), nl,
+    write('A huge dragon statue stands in the middle, which seems to be able to rotate...'), nl.
+
+describe(basement) :-
+    write('You saw a locked treasure chest, so you looked around...'), nl,
+    write('Several oil paintings are displayed in the basement, seem to depict the stories of past humans slaying dragons...'), nl,
+    write('You look closer and see four paintings arranged in a row:'), nl,
+    write('The first painting depicts a baby dragon drinking the river with an adult.'), nl,
+    write('The second painting depicts a knight fighting a dragon that has six heads in the cave.'), nl,
+    write('The third painting depicts three dragons circling over the town.'), nl,
+    write('The last painting depicts five soldiers show the dragon heads in their hands').
+
+describe(attic) :-
+    write('The princess was trapped in a cage! The dragon has discovered you!').
 
 /* Basic movement rules */
 n :- go(north).
@@ -126,6 +147,15 @@ check_path_condition(forest, west, cave) :-
     !,
     fail.
 
+check_path_condition(castle_hall, down, basement) :-
+    basement_door_open(true),
+    !.
+
+check_path_condition(castle_hall, down, basement) :-
+    write('It seems there is a hidden door leading to the basement. Think of a way to find it...'), nl,
+    !,
+    fail.
+
 check_path_condition(_, _, _).
 
 /* Look around */
@@ -156,11 +186,13 @@ item_info(iron_armor, armor, 40, 0, 10).
 item_info(iron_boot, footwear, 20, 0, 5).
 item_info(oil_lamp, tool, 10, 0, 0).
 item_info(crystal_sword, weapon, 0, 150, 0).
+item_info(wind_ring, tool, 0, 20, 30).
 
 item_info(apple, food, 4, 5, 5).                % name, type, price, hunger_restore, thirst_restore
 item_info(bread, food, 5, 10, 0).
 item_info(water, drink, 2, 0, 20).
 item_info(potion, health, 20, 25, 0).           % name, type, price, health_restore, none
+item_info(elixir, health, 0, 100, 0).
 
 /* Item inventories */
 shop_item(weapon_shop, iron_sword, 1).
@@ -175,6 +207,8 @@ shop_item(market, water, 100).
 shop_item(market, potion, 100).
 
 shop_item(river, crystal_sword, 1).
+shop_item(basement, wind_ring, 1).
+shop_item(basement, elixir, 5).
 
 /* Shop item listing */
 list_shop_items(Shop) :-
@@ -558,6 +592,8 @@ print_inventory([Item-Count|Rest]) :-
     print_inventory(Rest).
 
 /* Wish to the elf */
+:- dynamic wish_count/1, got_crystal_sword/1.
+:- retractall(wish_count(_)), retractall(got_crystal_sword(_)).
 wish_count(0).
 wish :-
     i_am_at(river),
@@ -610,6 +646,71 @@ wish :-
     write('You can only make a wish at the river!'), nl,
     !.
 
+/* Rotate dragon statue */
+:- dynamic basement_door_open/1.
+:- retractall(basement_door_open(_)).
+basement_door_open(false).
+
+rotate_statue :-
+    i_am_at(castle_hall),
+    basement_door_open(State),
+    (State = true ->
+        retract(basement_door_open(true)),
+        assert(basement_door_open(false)),
+        write('You rotate the dragon statue. The basement door closes with a heavy sound.'), nl
+    ;
+        retract(basement_door_open(false)),
+        assert(basement_door_open(true)),
+        write('You rotate the dragon statue. A hidden door to the basement opens!'), nl
+    ),
+    !.
+
+rotate_statue :-
+    \+ i_am_at(castle_hall),
+    write('There is no dragon statue here to rotate!'), nl,
+    !.
+
+/* Unlock the treasure chest */
+:- dynamic basement_treasure/1.
+:- retractall(basement_treasure(_)).
+basement_treasure(false).
+
+enter(Password) :-
+    i_am_at(basement),
+    basement_treasure(State),
+    player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+    (State = false ->
+        (Password = 2635 ->
+            retract(basement_treasure(false)),
+            assert(basement_treasure(true)),
+            player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+            NewGold is Gold + 500,
+            retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
+            assert(player_status(Health, Attack, Defense, Hunger, Thirst, NewGold)),
+            write('You unlock the treasure chest!'), nl,
+            write('You obtained 500 gold.'), nl,
+            add_to_bag(elixir, 5),
+            write('You obtained 5 Elixirs(Health + 100).'), nl,
+            add_to_bag(wind_ring, 1),
+            write('You obtained Wind Ring: Attack + 20, Defense + 30).'), nl
+        ;
+            write('The password seems incorrect. Let''s look for more clues...'), nl
+        )
+    ;
+        write('The treasure chest has already been unlocked.'), nl
+    ),
+    !.
+
+enter(Password) :-
+    \+ integer(Password),
+    write('Password must be a number!'), nl,
+    !.
+
+enter(_) :-
+    \+ i_am_at(basement),
+    write('There is no place to enter the password!'), nl,
+    !.
+
 /* Game instructions */
 help :-
     nl,
@@ -624,8 +725,10 @@ help :-
     write('equip(Item).                 - equip weapon/armor/tool'), nl,
     write('equip(all).                  - equip all the best weapon/armor'), nl,
     write('unequip(Slot).               - unequip weapon/armor/tool from slot'), nl,
-    write('drink_river.                 - Drink from river (at river only)'), nl,
-    write('wish.                        - Wish to the elf (at river only)'), nl,
+    write('drink_river.                 - Drink from river'), nl,
+    write('wish.                        - Wish to the elf'), nl,
+    write('rotate_statue.               - Rotate the dragon statue'), nl,
+    write('enter(Password).             - Enter the password'), nl,
     write('look.                        - Look around'), nl,
     write('help.                        - Show these instructions'), nl,
     write('halt.                        - Quit game'), nl,
