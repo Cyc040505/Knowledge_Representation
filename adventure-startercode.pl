@@ -2,11 +2,12 @@
 
 :- dynamic i_am_at/1, item_count/2, shop_item/3, equipped/2.
 :- retractall(i_am_at(_)), retractall(item_count(_,_)).
-:- dynamic player_status/6, player_equipments/5.
-:- retractall(player_status(_,_,_,_,_,_)), retractall(player_equipments(_,_,_,_,_)).
+:- dynamic player_status/6, player_equipments/5, hunger_thirst_penalty/1.
+:- retractall(player_status(_,_,_,_,_,_)), retractall(player_equipments(_,_,_,_,_)), retractall(hunger_thirst_penalty(_)).
 
 /* Initial player status: health, attack, defense, hunger, thirst, gold */
 player_status(100, 10, 5, 100, 100, 500).
+hunger_thirst_penalty(false).
 
 /* initial player equipments: head, body, foot, left, right */
 player_equipments(null, null, null, null, null).
@@ -735,13 +736,43 @@ check_needs_warning(Health, Hunger, Thirst) :-
     (Thirst < 20 -> write('WARNING: You are very thirsty!'), nl ; true).
 
 /* Update player status */
+check_hunger_thirst_penalty(CurrentHealth, NewHunger, NewThirst, FinalHealth) :-
+    (NewHunger =< 0 ; NewThirst =< 0) ->
+        (\+ hunger_thirst_penalty(true) ->
+            assert(hunger_thirst_penalty(true)),
+            write('WARNING: You are starving or dehydrated! You will lose health with every action!'), nl
+        ;
+            true
+        ),
+        HealthPenalty = 5,
+        FinalHealth is max(0, CurrentHealth - HealthPenalty),
+        (FinalHealth > 0 ->
+            write('You lose '), write(HealthPenalty), write(' health due to starvation or dehydration!'), nl
+        ;
+            write('You have died from starvation or dehydration!'), nl
+        )
+    ;
+        (hunger_thirst_penalty(true) ->
+            retract(hunger_thirst_penalty(true)),
+            write('You are no longer starving or dehydrated.'), nl
+        ;
+            true
+        ),
+        FinalHealth = CurrentHealth.
+
 update_move_status :-
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
     NewHunger is max(0, Hunger - 2),
     NewThirst is max(0, Thirst - 3),
+    check_hunger_thirst_penalty(Health, NewHunger, NewThirst, FinalHealth),
     retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
-    assert(player_status(Health, Attack, Defense, NewHunger, NewThirst, Gold)).
-
+    assert(player_status(FinalHealth, Attack, Defense, NewHunger, NewThirst, Gold)),
+    (FinalHealth =< 0 ->
+        write('You have died! Game Over.'), nl,
+        game_over
+    ;
+        true
+    ).
 
 /* Check Bag */
 bag :-
@@ -1082,6 +1113,19 @@ escape :-
     in_combat(true),
     combat_turn(player),
     !,
+    i_am_at(Location),
+    (Location = desert ->
+        HungerCost = 2, ThirstCost = 4
+    ;
+        HungerCost = 1, ThirstCost = 2
+    ),
+    player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+    NewHunger is max(0, Hunger - HungerCost),
+    NewThirst is max(0, Thirst - ThirstCost),
+    check_hunger_thirst_penalty(Health, NewHunger, NewThirst, FinalHealth),
+    retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
+    assert(player_status(FinalHealth, Attack, Defense, NewHunger, NewThirst, Gold)),
+
     random(1, 101, EscapeChance),
     (EscapeChance =< 50 ->
         write('You successfully escaped from the combat!'), nl,
@@ -1126,6 +1170,19 @@ player_attack :-
     !,
     current_monster(Monster, MonsterHealth, MonsterAttack, MonsterDefense),
     player_status(_, PlayerAttack, _, _, _, _),
+
+    i_am_at(Location),
+    (Location = desert ->
+        HungerCost = 4, ThirstCost = 6
+    ;
+        HungerCost = 2, ThirstCost = 3
+    ),
+    player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+    NewHunger is max(0, Hunger - HungerCost),
+    NewThirst is max(0, Thirst - ThirstCost),
+    check_hunger_thirst_penalty(Health, NewHunger, NewThirst, FinalHealth),
+    retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
+    assert(player_status(FinalHealth, Attack, Defense, NewHunger, NewThirst, Gold)),
 
     random(1, 101, DodgeChance),
     (DodgeChance =< 20 ->
@@ -1286,4 +1343,6 @@ start :-
     write('Welcome to this world! Hero!'), nl,
     write('You start with 500 gold. Explore this world to your heart''s content!'), nl,
     init_monsters,
-    write('Type "help." for help.'), nl.
+    write('Type "help." for help.'), nl,
+    nl,
+    look.
