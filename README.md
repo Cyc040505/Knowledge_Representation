@@ -20,7 +20,42 @@ and upgrade your equipment to complete the tasks.
 - **Desert:** Here you will encounter some random events, and your health condition will be depleted more quickly.
 - **Dragon Castle:** There is a special item in the basement that can help you defeat the dragon and rescue the princess from the attic.
 
-### Action Instructions
-```
+**_Monster Introduction_**
+- **Slime:** Cute little guys, only appear in the forest. (Health: 10, Attack: 1, Defense: 0)
+- **Goblin:** The common monsters in the forest have occupied the entire forest. (Health: 50, Attack: 10, Defense: 5)
+- **Bat:** The creatures in the cave move very quickly, so you can't defeat them. (Health: 5, Attack: 5, Defense: 0)
+- **Bear:** The guardian of the cave treasure is extremely fierce. (Health: 500, Attack: 50, Defense: 50)
+- **Mummy:** The common monsters in the desert, their sound are extremely terrifying. (Health: 200, Attack: 150, Defense: 80)
+- **Desert Worm:** The giant worm hidden under the sand looks extremely disgusting. (Health: 300, Attack: 150, Defense: 100)
+- **Dragon:** The final boss, very strong, is the one that captured the princess (Health: 1000, Attack: 200, Defense: 150)
 
-```
+### Action Instructions
+- Start the game: `start.`
+- Move direction: `n. s. e. w. u. d.`
+- Attack monster: `attack.`
+- Escape from combat: `escape.`
+- Check player's status: `status.`
+- Check player's bag: `bag.`
+- Buy items in the shop: `but(Item, Count).`
+- Sell your loot in the hall: `sell(Item, Count).`
+- Use supplies: `Use(Item).`
+- Equip weapon/armor/tool: `equip(Item).`
+- Equip the best weapon & armor: `equip(all).`
+- Unequip the item from slot: `unequip(Slot).`
+- Drink from river: `drink_river.`
+- Wish to the elf: `wish.`
+- Rotate the dragon statue: `rotate_statue.`
+- Enter the password: `enter(Password).`
+- Rescue the princess: `use_key.`
+- Look around: `look.`
+- Help: `help.`
+- Quit the game: `halt.`
+
+### Recommendation Strategy
+1. Buy some supplies at the Market(10 for each item)
+2. Buy all equipments at Weapon Shop
+3. Obtain loot in the Forest and sell them in the Adventurer's Hall
+4. Wish to the elf to obtain Crystal Sword
+5. Defeat bear in the cave and obtain obsidian armor
+6. Obtain Wind Ring in the basement
+7. Defeat the dragon and rescue the princess

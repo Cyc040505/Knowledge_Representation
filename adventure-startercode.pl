@@ -54,6 +54,8 @@ path(basement, up, castle_hall).
 describe(adventurers_hall) :-
     write('You are in the Adventurer''s Hall.'), nl,
     write('Your task is to defeat the dragon and rescue the princess.'), nl,
+    write('You can sell loot here! You have: '), nl,
+    list_loot, nl,
     write('Exits lead: west to Market, east to Weapon Shop, south to Forest.'), nl.
 
 describe(market) :-
@@ -84,9 +86,24 @@ describe(cave) :-
     write('Exit east to Forest. Use d. to explore the depths of the cave.').
 
 describe(deep_cave) :-
-    write('Wow! The minerals deep in the cave emitted a beautiful light.'), nl,
-    write('You see a treasure chest and are about to open it'), nl,
-    write('Breathing sounds came from behind. Oh no, it was a huge bear!').
+    (cave_collapsed(true) ->
+        write('The cave has completely collapsed! You cannot enter anymore.'), nl
+    ;
+        defeated_monster(bear) ->
+        (chest_opened(true) ->
+            write('The treasure chest has been opened and the cave is collapsing! Escape quickly!'), nl,
+            write('Exits lead: up to Cave.'), nl
+        ;
+            write('The giant bear has been defeated! The treasure chest is waiting to be opened.'), nl,
+            write('Use "open." to open the treasure chest.'), nl,
+            write('Exits lead: up to Cave.'), nl
+        )
+    ;
+        write('Wow! The minerals deep in the cave emitted a beautiful light.'), nl,
+        write('You see a treasure chest and are about to open it'), nl,
+        write('Breathing sounds came from behind. Oh no, it was a huge bear!'), nl,
+        write('Exits lead: up to Cave.'), nl
+    ).
 
 describe(desert) :-
     write('Scorching Desert: A vast expanse of golden sand under the scorching sun.'), nl,
@@ -109,7 +126,13 @@ describe(basement) :-
     write('The last painting depicts five soldiers show the dragon heads in their hands').
 
 describe(attic) :-
-    write('The princess was trapped in a cage! The dragon has discovered you!').
+    (defeated_monster(dragon) ->
+        write('The dragon has been defeated! Quickly use the key to rescue the princess!'), nl,
+        write('Use the key to open the cage: use_key.'), nl
+    ;
+        write('The princess was trapped in a cage! You try to break the cage.'), nl,
+        write('The huge commotion alarmed the dragon!'), nl
+    ).
 
 /* Basic movement rules */
 n :- go(north).
@@ -120,19 +143,25 @@ u :- go(up).
 d :- go(down).
 
 go(Direction) :-
-    i_am_at(Here),
-    (path(Here, Direction, There) ->
-        (check_path_condition(Here, Direction, There) ->
-            retract(i_am_at(Here)),
-            assert(i_am_at(There)),
-            update_move_status,
-            i_am_at(There),
-            look
-        ;
-            true
-        )
+    (in_combat(true) ->
+        write('You can''t move until the combat is over'), nl,
+        fail
     ;
-        write('It seems no roads to go.')
+        i_am_at(Here),
+        (path(Here, Direction, There) ->
+            (check_path_condition(Here, Direction, There) ->
+                retract(i_am_at(Here)),
+                assert(i_am_at(There)),
+                update_move_status,
+                i_am_at(There),
+                look,
+                check_monster_encounter
+            ;
+                true
+            )
+        ;
+            write('It seems no roads to go.')
+        )
     ),
     !.
 
@@ -144,6 +173,12 @@ check_path_condition(forest, west, cave) :-
 check_path_condition(forest, west, cave) :-
     write('The cave entrance is too dark to see! You need to equip an oil_lamp to enter.'), nl,
     write('Perhaps it can be available in the Weapon Shop...'), nl,
+    !,
+    fail.
+
+check_path_condition(cave, down, deep_cave) :-
+    cave_collapsed(true),
+    write('The cave entrance has collapsed! You cannot enter anymore.'), nl,
     !,
     fail.
 
@@ -186,13 +221,24 @@ item_info(iron_armor, armor, 40, 0, 10).
 item_info(iron_boot, footwear, 20, 0, 5).
 item_info(oil_lamp, tool, 10, 0, 0).
 item_info(crystal_sword, weapon, 0, 150, 0).
-item_info(wind_ring, tool, 0, 20, 30).
+item_info(obsidian_helmet, headgear, 0, 0, 65).
+item_info(obsidian_armor, armor, 0, 0, 30).
+item_info(obsidian_boot, footwear, 0, 0, 25).
+item_info(wind_ring, tool, 0, 90, 50).
+item_info(key, tool, 0, 0, 0).
 
 item_info(apple, food, 4, 5, 5).                % name, type, price, hunger_restore, thirst_restore
 item_info(bread, food, 5, 10, 0).
 item_info(water, drink, 2, 0, 20).
 item_info(potion, health, 20, 25, 0).           % name, type, price, health_restore, none
 item_info(elixir, health, 0, 100, 0).
+
+item_info(mucus_ball, loot, 1, 0, 0).
+item_info(goblin_ear, loot, 25, 0, 0).
+item_info(bat_wing, loot, 50, 0, 0).
+item_info(bearskin, loot, 200, 0, 0).
+item_info(emerald, loot, 250, 0, 0).
+item_info(sand_sac, loot, 250, 0, 0).
 
 /* Item inventories */
 shop_item(weapon_shop, iron_sword, 1).
@@ -207,6 +253,9 @@ shop_item(market, water, 100).
 shop_item(market, potion, 100).
 
 shop_item(river, crystal_sword, 1).
+shop_item(deep_cave, obsidian_helmet, 1).
+shop_item(deep_cave, obsidian_armor, 1).
+shop_item(deep_cave, obsidian_boot, 1).
 shop_item(basement, wind_ring, 1).
 shop_item(basement, elixir, 5).
 
@@ -218,6 +267,96 @@ list_shop_items(Shop) :-
     write('- '), write(Item), write(' ('), write(Type), write(') - '),
     write(Price), write(' gold (Available: '), write(Stock), write(')'), nl,
     fail.
+
+/* Sell items */
+sell(Item, Count) :-
+    integer(Count), Count > 0,
+    i_am_at(adventurers_hall),
+    item_count(Item, CurrentCount),
+    CurrentCount >= Count,
+    item_info(Item, Type, Price, _, _),
+    Type = loot,
+    TotalPrice = Price * Count,
+    player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+    NewGold is Gold + TotalPrice,
+    retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
+    assert(player_status(Health, Attack, Defense, Hunger, Thirst, NewGold)),
+    NewCount is CurrentCount - Count,
+    retract(item_count(Item, CurrentCount)),
+    (NewCount > 0 -> assert(item_count(Item, NewCount)) ; true),
+    write('You sold '), write(Count), write(' '), write(Item),
+    write(' for '), write(TotalPrice), write(' gold.'), nl,
+    !.
+
+sell(Item, Count) :-
+    integer(Count), Count > 0,
+    i_am_at(adventurers_hall),
+    item_count(Item, CurrentCount),
+    CurrentCount < Count,
+    write('Not enough '), write(Item), write('! You only have '),
+    write(CurrentCount), write('.'), nl,
+    !.
+
+sell(Item, Count) :-
+    integer(Count), Count > 0,
+    i_am_at(adventurers_hall),
+    item_info(Item, Type, _, _, _),
+    Type \= loot,
+    write('You can only sell loot items here!'), nl,
+    !.
+
+sell(Item, Count) :-
+    integer(Count), Count > 0,
+    i_am_at(adventurers_hall),
+    \+ item_info(Item, _, _, _, _),
+    write('There is no such item "'), write(Item), write('" in the game!'), nl,
+    !.
+
+sell(Item, Count) :-
+    integer(Count), Count > 0,
+    i_am_at(adventurers_hall),
+    item_info(Item, loot, _, _, _),
+    \+ item_count(Item, _),
+    write('You don''t have any '), write(Item), write(' to sell!'), nl,
+    !.
+
+sell(_, Count) :-
+    integer(Count), Count =< 0,
+    write('Count must be a positive integer!'), nl,
+    !.
+
+sell(_, Count) :-
+    \+ integer(Count),
+    write('Count must be an integer!'), nl,
+    !.
+
+
+
+sell(_) :-
+    \+ i_am_at(adventurers_hall),
+    write('You can only sell items at the Adventurer''s Hall!'), nl.
+
+list_loot :-
+    i_am_at(adventurers_hall),
+    findall(Item-Count-Price,
+            (item_count(Item, Count),
+             Count > 0,
+             item_info(Item, loot, Price, _, _)),
+            LootItems),
+    (LootItems = [] ->
+        write('You have no loot items to sell.'), nl
+    ;
+        write('=== LOOT ITEMS FOR SALE ==='), nl,
+        print_loot_items(LootItems)
+    ).
+
+print_loot_items([]).
+print_loot_items([Item-Count-Price|Rest]) :-
+    write('- '), write(Item), write(' (Price: '), write(Price),
+    write(' gold) - Quantity: '), write(Count), nl,
+    TotalValue is Price * Count,
+    write('  Total value: '), write(TotalValue), write(' gold'), nl,
+    print_loot_items(Rest).
 
 /* Buy items */
 buy(Item, Count) :-
@@ -277,8 +416,6 @@ buy(_, Count) :-
 buy(_, _) :-
     write('It seems that there is no such item.'), nl.
 
-buy(Item) :- buy(Item, 1).
-
 /* Bag management */
 add_to_bag(Item, Count) :-
     item_count(Item, CurrentCount),
@@ -293,14 +430,23 @@ add_to_bag(Item, Count) :-
 
 /* Use Items */
 use(Item) :-
+    \+ item_count(Item, _),
+    write('There is no such item in your bag.'), nl,
+    !.
+
+use(Item) :-
+    item_count(Item, Count),
+    Count =< 0,
+    write('You don''t have any '), write(Item), write(' left.'), nl,
+    !.
+
+use(Item) :-
     item_count(Item, Count),
     Count > 0,
-    item_info(Item, Type, _, Effect1, Effect2),
-    (Type = food; Type = drink; Type = health),
-    use_item_effect(Item, Type, Effect1, Effect2),
-    NewCount is Count - 1,
-    retract(item_count(Item, Count)),
-    (NewCount > 0 -> assert(item_count(Item, NewCount)) ; true),
+    item_info(Item, Type, _, _, _),
+    Type = loot,
+    !,
+    write('You cannot use '), write(Item), write('. But you can sell it in the Adventurer''s Hall'), nl,
     !.
 
 use(Item) :-
@@ -308,16 +454,38 @@ use(Item) :-
     Count > 0,
     item_info(Item, Type, _, _, _),
     (Type = weapon; Type = headgear; Type = armor; Type = footwear; Type = tool),
+    !,
     write('You cannot use '), write(Item), write(' directly. Please equip it with equip('), write(Item), write(').'), nl,
     !.
 
 use(Item) :-
-    item_count(Item, 0),
-    write('You don''t have any '), write(Item), write(' left.'), nl,
+    item_count(Item, Count),
+    Count > 0,
+    in_combat(true),
+    combat_turn(player),
+    !,
+    item_info(Item, Type, _, Effect1, Effect2),
+    (Type = food; Type = drink; Type = health),
+    use_item_effect(Item, Type, Effect1, Effect2),
+    NewCount is Count - 1,
+    retract(item_count(Item, Count)),
+    (NewCount > 0 -> assert(item_count(Item, NewCount)) ; true),
+    write('You used '), write(Item), write(' in combat!'), nl,
     !.
 
-use(_) :-
-    write('There is no such item in your bag.'), nl.
+use(Item) :-
+    item_count(Item, Count),
+    Count > 0,
+    \+ in_combat(true),
+    !,
+    item_info(Item, Type, _, Effect1, Effect2),
+    (Type = food; Type = drink; Type = health),
+    use_item_effect(Item, Type, Effect1, Effect2),
+    NewCount is Count - 1,
+    retract(item_count(Item, Count)),
+    (NewCount > 0 -> assert(item_count(Item, NewCount)) ; true),
+    write('You used '), write(Item), write('.'), nl,
+    !.
 
 use_item_effect(Item, food, HungerRestore, ThirstRestore) :-
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
@@ -570,7 +738,7 @@ check_needs_warning(Health, Hunger, Thirst) :-
 update_move_status :-
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
     NewHunger is max(0, Hunger - 2),
-    NewThirst is max(0, Thirst - 5),
+    NewThirst is max(0, Thirst - 3),
     retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
     assert(player_status(Health, Attack, Defense, NewHunger, NewThirst, Gold)).
 
@@ -645,6 +813,54 @@ wish :-
     \+ i_am_at(river),
     write('You can only make a wish at the river!'), nl,
     !.
+/* Collapse the cave */
+:- dynamic chest_opened/1, cave_collapsed/1.
+:- retractall(chest_opened(_)), retractall(cave_collapsed(_)).
+chest_opened(false).
+cave_collapsed(false).
+
+open :-
+    i_am_at(deep_cave),
+    defeated_monster(bear),
+    \+ chest_opened(true),
+    !,
+    add_to_bag(obsidian_helmet, 1),
+    add_to_bag(obsidian_armor, 1),
+    add_to_bag(obsidian_boot, 1),
+    player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
+    NewGold is Gold + 500,
+    retract(player_status(Health, Attack, Defense, Hunger, Thirst, Gold)),
+    assert(player_status(Health, Attack, Defense, Hunger, Thirst, NewGold)),
+    retract(chest_opened(false)),
+    assert(chest_opened(true)),
+    write('You opened the treasure chest!'), nl,
+    write('You obtained:'), nl,
+    write('- Obsidian Helmet'), nl,
+    write('- Obsidian Armor'), nl,
+    write('- Obsidian Boots'), nl,
+    write('- 500 gold'), nl,
+    write('Suddenly, the cave starts shaking! The treasure chest triggered a mechanism!'), nl,
+    write('The cave is collapsing! You need to escape quickly!'), nl,
+    retract(cave_collapsed(false)),
+    assert(cave_collapsed(true)),
+    !.
+
+open :-
+    i_am_at(deep_cave),
+    \+ defeated_monster(bear),
+    write('You cannot open the treasure chest while the bear is still alive!'), nl,
+    !.
+
+open :-
+    i_am_at(deep_cave),
+    chest_opened(true),
+    write('The treasure chest has already been opened!'), nl,
+    !.
+
+open :-
+    \+ i_am_at(deep_cave),
+    write('There is no treasure chest to open here!'), nl,
+    !.
 
 /* Rotate dragon statue */
 :- dynamic basement_door_open/1.
@@ -692,7 +908,7 @@ enter(Password) :-
             add_to_bag(elixir, 5),
             write('You obtained 5 Elixirs(Health + 100).'), nl,
             add_to_bag(wind_ring, 1),
-            write('You obtained Wind Ring: Attack + 20, Defense + 30).'), nl
+            write('You obtained Wind Ring: Attack + 90, Defense + 50).'), nl
         ;
             write('The password seems incorrect. Let''s look for more clues...'), nl
         )
@@ -710,6 +926,334 @@ enter(_) :-
     \+ i_am_at(basement),
     write('There is no place to enter the password!'), nl,
     !.
+/* Rescue the princess */
+use_key :-
+    i_am_at(attic),
+    defeated_monster(dragon),
+    item_count(key, Count),
+    Count > 0,
+    !,
+    write('You used the key to open the cage and successfully rescued the princess!'), nl,
+    write('=== Game victory! ==='), nl,
+    write('Congratulations on completing the mission of saving the princess!'), nl,
+    halt.
+
+use_key :-
+    i_am_at(attic),
+    \+ defeated_monster(dragon),
+    write('You don''t have key! Defeat the dragon to obtain the key!'), nl,
+    !.
+
+use_key :-
+    \+ i_am_at(attic),
+    item_count(key, Count),
+    (Count > 0 ->
+        write('There is no place to use key.'), nl
+    ;
+        write('You don''t have any key in your bag.'), nl
+    ),
+    !.
+
+use_key :-
+    \+ i_am_at(attic),
+    \+ item_count(key, _),
+    write('You don''t have any key in your bag.'), nl,
+    !.
+
+/* Monster System */
+:- dynamic bear_defeated/1, dragon_defeated/1.
+:- retractall(bear_defeated(_)), retractall(dragon_defeated(_)).
+bear_defeated(false).
+dragon_defeated(false).
+
+:- dynamic monster/5, monster_here/2, monster_status/4, defeated_monster/1.
+:- retractall(monster(_,_,_,_,_)), retractall(monster_here(_,_)), retractall(monster_status(_,_,_,_)), retractall(defeated_monster(_)).
+
+monster(slime, forest, 10, 1, 0).                   % Monster Definition: name, area, health, attack, defense
+monster(goblin, forest, 50, 10, 5).
+monster(bat, cave, 5, 5, 0).
+monster(bear, deep_cave, 500, 50, 50).
+monster(mummy, desert, 200, 150, 80).
+monster(desert_worm, desert, 300, 150, 100).
+monster(dragon, attic, 1000, 200, 150).
+
+monster_encounter_chance(forest, 90).               % Monster encounter chance: area, probability
+monster_encounter_chance(cave, 80).
+monster_encounter_chance(deep_cave, 100).
+monster_encounter_chance(desert, 50).
+monster_encounter_chance(attic, 100).
+
+init_monsters :-
+    retractall(monster_here(_,_)),
+    retractall(monster_status(_,_,_,_)),
+    retractall(defeated_monster(_)),
+    forall(monster(Name, Location, Health, _, _),
+           assert(monster_status(Name, Location, Health, active))).
+
+check_monster_encounter :-
+    i_am_at(Location),
+    \+ in_combat(true),
+    monster_encounter_chance(Location, Chance),
+    random(1, 101, Random),
+    Random =< Chance,
+    find_monster_for_location(Location, Monster),
+    \+ monster_here(Location, _),
+    ( (Monster = bear; Monster = dragon) ->
+        ( \+ defeated_monster(Monster) ->
+            assert(monster_here(Location, Monster)),
+            write('Oh no! The '), write(Monster), write(' is charging towards you!'), nl,
+            start_combat(Monster)
+        ;
+            true
+        )
+    ;
+        assert(monster_here(Location, Monster)),
+        write('Oh no! The '), write(Monster), write(' is charging towards you!'), nl,
+        start_combat(Monster)
+    ),
+    !.
+check_monster_encounter.
+
+find_monster_for_location(Location, Monster) :-
+    findall(Name, monster(Name, Location, _, _, _), Monsters),
+    Monsters \= [],
+    random_member(Monster, Monsters).
+
+/* Combat System */
+:- dynamic in_combat/1, current_monster/4, combat_turn/1.
+:- retractall(in_combat(_)), retractall(current_monster(_,_,_,_)), retractall(combat_turn(_)).
+
+check_combat_move :-
+    in_combat(_),
+    write('Use "attack." to attack or "escape." to try to escape.'), nl,
+    !,
+    fail.
+check_combat_move.
+
+start_combat(Monster) :-
+    monster(Monster, _, Health, Attack, Defense),
+    assert(in_combat(true)),
+    assert(current_monster(Monster, Health, Attack, Defense)),
+    assert(combat_turn(player)),
+    write('=== COMBAT START! ==='), nl,
+    write('You encounter a '), write(Monster), write('!'), nl,
+    display_combat_status,
+    !.
+
+display_combat_status :-
+    current_monster(Monster, MonsterHealth, MonsterAttack, MonsterDefense),
+    player_status(PlayerHealth, PlayerAttack, PlayerDefense, PlayerHunger, PlayerThirsty, _),
+    nl, write('=== COMBAT STATUS ==='), nl,
+    write('Monster: '), write(Monster), nl,
+    write('Monster Health: '), write(MonsterHealth), nl,
+    write('Monster Attack: '), write(MonsterAttack), nl,
+    write('Monster Defense: '), write(MonsterDefense), nl,
+    write('---'), nl,
+    write('Your Health: '), write(PlayerHealth), write('/100'), nl,
+    write('Your Attack: '), write(PlayerAttack), nl,
+    write('Your Defense: '), write(PlayerDefense), nl,
+    write('Your Hunger: '), write(PlayerHunger), nl,
+    write('Your Hunger: '), write(PlayerThirsty), nl,
+    nl,
+    (combat_turn(player) ->
+        write('It''s your turn! Commands: attack., escape., use(Item).'), nl
+    ;
+        write('It''s the monster''s turn!'), nl
+    ).
+
+attack :-
+    in_combat(true),
+    combat_turn(player),
+    !,
+    player_attack,
+    (check_combat_end -> true; true).
+
+attack :-
+    in_combat(true),
+    combat_turn(monster),
+    write('It''s not your turn! The monster is about to attack!'), nl,
+    !.
+
+attack :-
+    \+ in_combat(_),
+    write('You are not in combat!'), nl.
+
+escape :-
+    in_combat(true),
+    combat_turn(player),
+    !,
+    random(1, 101, EscapeChance),
+    (EscapeChance =< 50 ->
+        write('You successfully escaped from the combat!'), nl,
+        end_combat(escape)
+    ;
+        write('Escape failed! The monster blocks your path.'), nl,
+        retract(combat_turn(player)),
+        assert(combat_turn(monster)),
+        monster_attack_action
+    ).
+
+escape :-
+    in_combat(true),
+    combat_turn(monster),
+    write('You cannot escape during the monster''s turn!'), nl,
+    !.
+
+escape :-
+    \+ in_combat(_),
+    write('You are not in combat!'), nl.
+
+use_in_combat(Item) :-
+    in_combat(true),
+    combat_turn(player),
+    use(Item),
+    !.
+
+use_in_combat(_) :-
+    in_combat(true),
+    combat_turn(monster),
+    write('You cannot use items during the monster''s turn!'), nl,
+    !.
+
+use_in_combat(Item) :-
+    \+ in_combat(_),
+    use(Item).
+
+/* Player attack */
+player_attack :-
+    in_combat(true),
+    combat_turn(player),
+    !,
+    current_monster(Monster, MonsterHealth, MonsterAttack, MonsterDefense),
+    player_status(_, PlayerAttack, _, _, _, _),
+
+    random(1, 101, DodgeChance),
+    (DodgeChance =< 20 ->
+        write('The '), write(Monster), write(' dodged your attack!'), nl
+    ;
+        Damage is max(1, PlayerAttack - MonsterDefense),
+        NewMonsterHealth is MonsterHealth - Damage,
+        retract(current_monster(Monster, MonsterHealth, MonsterAttack, MonsterDefense)),
+        (NewMonsterHealth > 0 ->
+            assert(current_monster(Monster, NewMonsterHealth, MonsterAttack, MonsterDefense)),
+            write('You hit the '), write(Monster), write(' for '), write(Damage), write(' damage!'), nl,
+            write('Monster health: '), write(NewMonsterHealth), nl
+        ;
+            write('You deliver the final blow! The '), write(Monster), write(' is defeated!'), nl,
+            end_combat(victory),
+            give_combat_rewards(Monster),
+            !
+        )
+    ),
+    (in_combat(true) ->
+        retract(combat_turn(player)),
+        assert(combat_turn(monster)),
+        write('It''s the monster''s turn!'), nl,
+        monster_attack_action
+    ;
+        true
+    ).
+
+/* Monster attack */
+monster_attack_action :-
+    current_monster(Monster, _, MonsterAttack, _),
+    player_status(PlayerHealth, PlayerAttack, PlayerDefense, Hunger, Thirst, Gold),
+
+    Damage is max(1, MonsterAttack - PlayerDefense),
+    NewPlayerHealth is PlayerHealth - Damage,
+
+    retract(player_status(PlayerHealth, PlayerAttack, PlayerDefense, Hunger, Thirst, Gold)),
+    assert(player_status(NewPlayerHealth, PlayerAttack, PlayerDefense, Hunger, Thirst, Gold)),
+
+    write('The '), write(Monster), write(' attacks you for '), write(Damage), write(' damage!'), nl,
+    write('Your health: '), write(NewPlayerHealth), nl,
+
+    (NewPlayerHealth =< 0 ->
+        write('You have been defeated! Game Over.'), nl,
+        end_combat(defeat),
+        game_over
+    ;
+        retract(combat_turn(monster)),
+        assert(combat_turn(player)),
+        write('It''s your turn! Type "attack." to attack or "escape." to try to escape.'), nl
+    ).
+
+monster_attack :-
+    in_combat(true),
+    combat_turn(monster),
+    !,
+    monster_attack_action.
+
+monster_turn :-
+    in_combat(true),
+    combat_turn(monster),
+    !,
+    monster_attack.
+
+monster_turn :-
+    \+ combat_turn(monster),
+    write('It''s not the monster''s turn!'), nl.
+
+/* End the combat */
+check_combat_end :-
+   current_monster(Monster, Health, _, _),
+    (Health =< 0 ->
+        write('The '), write(Monster), write(' has been defeated!'), nl,
+        end_combat(victory),
+        give_combat_rewards(Monster)
+    ;
+        true
+    ).
+
+end_combat(Result) :-
+    retractall(in_combat(_)),
+    retractall(current_monster(_,_,_,_)),
+    retractall(combat_turn(_)),
+    i_am_at(Location),
+    retractall(monster_here(Location, _)),
+    (Result = victory -> write('Victory!') ; true),
+    (Result = escape -> write('You escaped safely.') ; true),
+    nl.
+
+/* Reward system */
+give_combat_rewards(Monster) :-
+    monster_reward(Monster, ItemReward, ItemCount),
+    (ItemReward \= none ->
+        add_to_bag(ItemReward, ItemCount),
+        write('You obtained '), write(ItemCount), write(' '), write(ItemReward), write('!'), nl
+    ;
+        true
+    ),
+    (Monster = bear ->
+        assert(defeated_monster(Monster)),
+        retractall(bear_defeated(_)),
+        assert(bear_defeated(true)),
+        write('The '), write(Monster), write(' has been permanently defeated!'), nl
+    ;
+    Monster = dragon ->
+        assert(defeated_monster(Monster)),
+        retractall(dragon_defeated(_)),
+        assert(dragon_defeated(true)),
+        write('The '), write(Monster), write(' has been permanently defeated!'), nl,
+        write('Now use the key to rescue the princess! (use_key.)')
+    ;
+        true
+    ).
+
+monster_reward(slime, mucus_ball, 3).                  % monster, item, count
+monster_reward(goblin, goblin_ear, 2).
+monster_reward(bat, bat_wing, 2).
+monster_reward(bear, bearskin, 1).
+monster_reward(mummy, emerald, 1).
+monster_reward(desert_worm, sand_sac, 2).
+monster_reward(dragon, key, 1).
+
+/* Game over */
+game_over :-
+    write('=== GAME OVER ==='), nl,
+    write('You have been defeated in combat.'), nl,
+    write('Type "start." to restart the game.'), nl,
+    halt.
 
 /* Game instructions */
 help :-
@@ -717,19 +1261,22 @@ help :-
     write('=== Rescue the Princess ==='), nl,
     write('Available commands:'), nl,
     write('n. s. e. w. u. d.            - Move in directions'), nl,
+    write('attack.                      - Attack the monster'), nl,
+    write('escape.                      - Try to escape from combat'), nl,
     write('status.                      - Check your status'), nl,
     write('bag.                         - Check bag'), nl,
     write('buy(Item, Count).            - Buy items in shops'), nl,
-    write('buy(Item).                   - Buy only one item in shops'), nl,
+    write('sell(Item, Count).           - sell your loot in hall'), nl,
     write('use(Item).                   - Use consumable items'), nl,
     write('equip(Item).                 - equip weapon/armor/tool'), nl,
     write('equip(all).                  - equip all the best weapon/armor'), nl,
     write('unequip(Slot).               - unequip weapon/armor/tool from slot'), nl,
     write('drink_river.                 - Drink from river'), nl,
     write('wish.                        - Wish to the elf'), nl,
+    write('open.                        - Open the chest in cave'), nl,
     write('rotate_statue.               - Rotate the dragon statue'), nl,
     write('enter(Password).             - Enter the password'), nl,
-    write('look.                        - Look around'), nl,
+    write('use_key.                     - Rescue the princess'), nl,
     write('help.                        - Show these instructions'), nl,
     write('halt.                        - Quit game'), nl,
     nl.
@@ -738,4 +1285,5 @@ help :-
 start :-
     write('Welcome to this world! Hero!'), nl,
     write('You start with 500 gold. Explore this world to your heart''s content!'), nl,
+    init_monsters,
     write('Type "help." for help.'), nl.
