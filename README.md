@@ -17,16 +17,20 @@ and upgrade your equipment to complete the tasks.
 - **Forest:** Here you may meet some random events, defeats monsters and get the loot.
 - **River:** This is the only safe place outside the city. Making a wish has a chance to trigger an elf event and obtain a special weapon.
 - **Cave:** Here you will fight against the giant bear guarding the treasure. After winning, you will be able to obtain special armor.
-- **Desert:** Here you will encounter some random events, and your health condition will be depleted more quickly.
+- **Desert:** Here you will pass through the desert maze. Be careful of the guard in the maze and don't get caught.
 - **Dragon Castle:** There is a special item in the basement that can help you defeat the dragon and rescue the princess from the attic.
+
+**_Map of Desert Maze_**
+```
+
+```
 
 **_Monster Introduction_**
 - **Slime:** Cute little guys, only appear in the forest. (Health: 10, Attack: 1, Defense: 0)
 - **Goblin:** The common monsters in the forest have occupied the entire forest. (Health: 50, Attack: 10, Defense: 5)
 - **Bat:** The creatures in the cave move very quickly, so you can't defeat them. (Health: 5, Attack: 5, Defense: 0)
 - **Bear:** The guardian of the cave treasure is extremely fierce. (Health: 500, Attack: 50, Defense: 50)
-- **Mummy:** The common monsters in the desert, their sound are extremely terrifying. (Health: 200, Attack: 150, Defense: 80)
-- **Desert Worm:** The giant worm hidden under the sand looks extremely disgusting. (Health: 300, Attack: 150, Defense: 100)
+- **Maze Guard:** A huge stone statue that will eliminate the explorers who enter the maze and cannot be defeated.
 - **Dragon:** The final boss, very strong, is the one that captured the princess (Health: 1000, Attack: 200, Defense: 150)
 
 ### Action Instructions

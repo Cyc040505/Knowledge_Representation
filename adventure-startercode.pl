@@ -234,12 +234,10 @@ item_info(water, drink, 2, 0, 20).
 item_info(potion, health, 20, 25, 0).           % name, type, price, health_restore, none
 item_info(elixir, health, 0, 100, 0).
 
-item_info(mucus_ball, loot, 1, 0, 0).
-item_info(goblin_ear, loot, 25, 0, 0).
-item_info(bat_wing, loot, 50, 0, 0).
+item_info(mucus_ball, loot, 20, 0, 0).
+item_info(goblin_ear, loot, 50, 0, 0).
+item_info(bat_wing, loot, 100, 0, 0).
 item_info(bearskin, loot, 200, 0, 0).
-item_info(emerald, loot, 250, 0, 0).
-item_info(sand_sac, loot, 250, 0, 0).
 
 /* Item inventories */
 shop_item(weapon_shop, iron_sword, 1).
@@ -844,6 +842,7 @@ wish :-
     \+ i_am_at(river),
     write('You can only make a wish at the river!'), nl,
     !.
+
 /* Collapse the cave */
 :- dynamic chest_opened/1, cave_collapsed/1.
 :- retractall(chest_opened(_)), retractall(cave_collapsed(_)).
@@ -892,6 +891,9 @@ open :-
     \+ i_am_at(deep_cave),
     write('There is no treasure chest to open here!'), nl,
     !.
+
+/* Desert maze */
+
 
 /* Rotate dragon statue */
 :- dynamic basement_door_open/1.
@@ -1004,14 +1006,12 @@ monster(slime, forest, 10, 1, 0).                   % Monster Definition: name, 
 monster(goblin, forest, 50, 10, 5).
 monster(bat, cave, 5, 5, 0).
 monster(bear, deep_cave, 500, 50, 50).
-monster(mummy, desert, 200, 150, 80).
-monster(desert_worm, desert, 300, 150, 100).
 monster(dragon, attic, 1000, 200, 150).
 
 monster_encounter_chance(forest, 90).               % Monster encounter chance: area, probability
 monster_encounter_chance(cave, 80).
 monster_encounter_chance(deep_cave, 100).
-monster_encounter_chance(desert, 50).
+monster_encounter_chance(desert, 0).
 monster_encounter_chance(attic, 100).
 
 init_monsters :-
@@ -1113,12 +1113,7 @@ escape :-
     in_combat(true),
     combat_turn(player),
     !,
-    i_am_at(Location),
-    (Location = desert ->
-        HungerCost = 2, ThirstCost = 4
-    ;
-        HungerCost = 1, ThirstCost = 2
-    ),
+    HungerCost = 1, ThirstCost = 2,
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
     NewHunger is max(0, Hunger - HungerCost),
     NewThirst is max(0, Thirst - ThirstCost),
@@ -1171,12 +1166,7 @@ player_attack :-
     current_monster(Monster, MonsterHealth, MonsterAttack, MonsterDefense),
     player_status(_, PlayerAttack, _, _, _, _),
 
-    i_am_at(Location),
-    (Location = desert ->
-        HungerCost = 4, ThirstCost = 6
-    ;
-        HungerCost = 2, ThirstCost = 3
-    ),
+    HungerCost = 2, ThirstCost = 3,
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
     NewHunger is max(0, Hunger - HungerCost),
     NewThirst is max(0, Thirst - ThirstCost),
@@ -1301,8 +1291,6 @@ monster_reward(slime, mucus_ball, 3).                  % monster, item, count
 monster_reward(goblin, goblin_ear, 2).
 monster_reward(bat, bat_wing, 2).
 monster_reward(bear, bearskin, 1).
-monster_reward(mummy, emerald, 1).
-monster_reward(desert_worm, sand_sac, 2).
 monster_reward(dragon, key, 1).
 
 /* Game over */
