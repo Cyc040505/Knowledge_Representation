@@ -2,7 +2,7 @@
 ### Start Game
 - Install SWI-Prolog: https://www.swi-prolog.org/download/stable
 - Install Pyperplan: `pip install pyperplan`
-- Start Game: `swipl adventure-startercode.pl`
+- Start Game: `swipl -q -s Rescue_the_Princess.pl`
 
 ### Game Instructions
 **_Game Background_**  
@@ -20,9 +20,24 @@ and upgrade your equipment to complete the tasks.
 - **Desert:** Here you will pass through the desert maze. Be careful of the guard in the maze and don't get caught.
 - **Dragon Castle:** There is a special item in the basement that can help you defeat the dragon and rescue the princess from the attic.
 
-**_Map of Desert Maze_**
+**_Desert Maze_**
+- **Sand wall:** "#", You can't pass them.
+- **Sand:** ".", the normal roads.
+- **Quicksand:** "~", passing through quicksand will consume extra energy. This can also hold back the actions of guard.
+- **Player:** "P", your current position.
+- **Guard:** "G", the current position of guard.
+- **Exit:** "X", your destination.
 ```
-
+##############################
+#P..~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#G#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
 ```
 
 **_Monster Introduction_**
