@@ -163,7 +163,7 @@
         cell_9_30 - cell
     )
     (:init
-        (sand cell_2_2)
+        (start cell_2_2)
         (sand cell_2_3)
         (sand cell_2_4)
         (quicksand cell_2_5)
@@ -321,7 +321,7 @@
         (sand cell_9_26)
         (sand cell_9_27)
         (sand cell_9_28)
-        (start cell_9_29)
+        (sand cell_9_29)
         (exit cell_9_30)
         (adjacent cell_2_2 cell_3_2)
         (adjacent cell_2_2 cell_2_3)
@@ -716,7 +716,7 @@
         (adjacent cell_9_29 cell_9_30)
         (adjacent cell_9_30 cell_9_29)
         (at_player cell_9_29)
-        (at_guard cell_6_16)
+        (at_guard cell_9_23)
         (free)
     )
     (:goal (at_guard cell_9_29))

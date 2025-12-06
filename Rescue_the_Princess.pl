@@ -215,7 +215,7 @@ describe(basement) :-
     write('The first painting depicts a baby dragon drinking the river with an adult.'), nl,
     write('The second painting depicts a knight fighting a dragon that has six heads in the cave.'), nl,
     write('The third painting depicts three dragons circling over the town.'), nl,
-    write('The last painting depicts five soldiers show the dragon heads in their hands').
+    write('The last painting depicts five soldiers show the dragon heads in their hands.').
 
 describe(attic) :-
     (defeated_monster(dragon) ->
@@ -342,7 +342,7 @@ item_info(wind_ring, tool, 0, 90, 50).
 item_info(key, tool, 0, 0, 0).
 
 item_info(apple, food, 4, 5, 5).                % name, type, price, hunger_restore, thirst_restore
-item_info(bread, food, 5, 10, 0).
+item_info(bread, food, 5, 20, 0).
 item_info(water, drink, 2, 0, 20).
 item_info(potion, health, 20, 25, 0).           % name, type, price, health_restore, none
 item_info(elixir, health, 0, 100, 0).
@@ -820,7 +820,7 @@ update_equipment(right, NewItem, Head, Body, Foot, Left, _, Head, Body, Foot, Le
 status :-
     player_status(Health, Attack, Defense, Hunger, Thirst, Gold),
     player_equipments(Head, Body, Foot, Left, Right),
-    nl, write('=== PLAYER STATUS ==='), nl,
+    write('=== PLAYER STATUS ==='), nl,
     write('Health: '), write(Health), write('/100'), nl,
     write('Attack: '), write(Attack), nl,
     write('Defense: '), write(Defense), nl,
@@ -828,11 +828,11 @@ status :-
     write('Thirst: '), write(Thirst), write('/100'), nl,
     write('Gold: '), write(Gold), nl,
     write('=== PLAYER EQUIPMENTS ==='), nl,
-    write('  Head: '), write(Head), nl,
-    write('  Body: '), write(Body), nl,
-    write('  Foot: '), write(Foot), nl,
-    write('  Left: '), write(Left), nl,
-    write('  Right: '), write(Right), nl,
+    write('Head: '), write(Head), nl,
+    write('Body: '), write(Body), nl,
+    write('Foot: '), write(Foot), nl,
+    write('Left: '), write(Left), nl,
+    write('Right: '), write(Right), nl,
     check_needs_warning(Health, Hunger, Thirst),
     nl.
 

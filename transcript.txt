@@ -1,0 +1,1435 @@
+swipl -q -s Rescue_the_Princess.pl
+===============================================
+              Rescue the Princess
+===============================================
+Type "start." to begin your adventure.
+Type "help." to see all available commands.
+
+1 ?- start.
+Welcome to this world! Hero!
+You start with 500 gold. Explore this world to your heart's content!
+
+You are in the Adventurer's Hall.
+Your task is to defeat the dragon and rescue the princess.
+You can sell loot here! You have:
+You have no loot items to sell.
+
+Exits lead: west to Market, east to Weapon Shop, south to Forest.
+
+2 ?- s.
+Dark Forest: Tall trees create a canopy overhead, filtering the sunlight.
+There seems to be danger hidden here.
+Exits lead: north to Adventurer's Hall, east to River, west to Cave, south to Desert.
+
+Oh no! The goblin is charging towards you!
+=== COMBAT START! ===
+You encounter a goblin!
+
+=== COMBAT STATUS ===
+Monster: goblin
+Monster Health: 50
+Monster Attack: 10
+Monster Defense: 5
+---
+Your Health: 100/100
+Your Attack: 10
+Your Defense: 5
+Your Hunger: 98
+Your Hunger: 97
+
+It's your turn! Commands: attack., escape., use(Item).
+true.
+
+3 ?- escape.
+Escape failed! The monster blocks your path.
+The goblin attacks you for 5 damage!
+Your health: 95
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+4 ?- escape.
+You successfully escaped from the combat!
+You escaped safely.
+true.
+
+5 ?- wish.
+You threw 100 gold coins into the river, hoping to receive a response from the elves.
+It seems nothing happened... You lost 100 gold.
+true.
+
+6 ?- wish.
+You threw 100 gold coins into the river, hoping to receive a response from the elves.
+The elf has heard your wish! A flash of light passed, and you obtained the Crystal Sword!
+Crystal Sword: Attack +150
+true.
+
+7 ?- equip(crystal_sword).
+You equipped the crystal_sword to right slot.
+true.
+
+8 ?- drink_river.
+You drink from the river and feel better!
+true.
+
+9 ?- status.
+=== PLAYER STATUS ===
+Health: 100/100
+Attack: 160
+Defense: 5
+Hunger: 94/100
+Thirst: 100/100
+Gold: 300
+=== PLAYER EQUIPMENTS ===
+Head: null
+Body: null
+Foot: null
+Left: null
+Right: crystal_sword
+
+true.
+
+10 ?- w.
+Dark Forest: Tall trees create a canopy overhead, filtering the sunlight.
+There seems to be danger hidden here.
+Exits lead: north to Adventurer's Hall, east to River, west to Cave, south to Desert.
+
+Oh no! The goblin is charging towards you!
+=== COMBAT START! ===
+You encounter a goblin!
+
+=== COMBAT STATUS ===
+Monster: goblin
+Monster Health: 50
+Monster Attack: 10
+Monster Defense: 5
+---
+Your Health: 100/100
+Your Attack: 160
+Your Defense: 5
+Your Hunger: 92
+Your Hunger: 97
+
+It's your turn! Commands: attack., escape., use(Item).
+true.
+
+11 ?- attack.
+You deliver the final blow! The goblin is defeated!
+Victory!
+You obtained 2 goblin_ear!
+true.
+
+12 ?- n.
+You are in the Adventurer's Hall.
+Your task is to defeat the dragon and rescue the princess.
+You can sell loot here! You have:
+=== LOOT ITEMS FOR SALE ===
+- goblin_ear (Price: 50 gold) - Quantity: 2
+  Total value: 100 gold
+
+Exits lead: west to Market, east to Weapon Shop, south to Forest.
+
+true.
+
+13 ?- sell(goblin_ear,2).
+You sold 2 goblin_ear for 50*2 gold.
+true.
+
+14 ?- e.
+Weapon Shop: Various weapons and armor are displayed on the walls.
+The shopkeeper nods as you enter. You can purchase weaponry here.
+Available items:
+- iron_sword (weapon) - 50 gold (Available: 1)
+- iron_helmet (headgear) - 50 gold (Available: 1)
+- iron_armor (armor) - 40 gold (Available: 1)
+- iron_boot (footwear) - 20 gold (Available: 1)
+- oil_lamp (tool) - 10 gold (Available: 1)
+Exit west to Adventurer's Hall.
+
+15 ?- buy(iron_helmet,1).
+You bought 1 iron_helmet for 50*1 gold.
+true.
+
+16 ?- buy(iron_armor,1).
+You bought 1 iron_armor for 40*1 gold.
+true.
+
+17 ?- buy(iron_boot,1).
+You bought 1 iron_boot for 20*1 gold.
+true.
+
+18 ?- buy(oil_lamp,1).
+You bought 1 oil_lamp for 10*1 gold.
+true.
+
+19 ?- equip(all).
+You unequipped the crystal_sword from your right.
+You equipped the crystal_sword to right slot.
+Equipped the best weapon: crystal_sword (Attack + 150)
+You equipped the iron_helmet to head slot.
+Equipped the best headgear: iron_helmet (Defense + 10) -> head
+You equipped the iron_armor to body slot.
+Equipped the best armor: iron_armor (Defense + 10) -> body
+You equipped the iron_boot to foot slot.
+Equipped the best footwear: iron_boot (Defense + 5) -> foot
+true.
+
+20 ?- status.
+=== PLAYER STATUS ===
+Health: 100/100
+Attack: 160
+Defense: 30
+Hunger: 86/100
+Thirst: 89/100
+Gold: 280
+=== PLAYER EQUIPMENTS ===
+Head: iron_helmet
+Body: iron_armor
+Foot: iron_boot
+Left: null
+Right: crystal_sword
+
+true.
+
+21 ?- w.
+You are in the Adventurer's Hall.
+Your task is to defeat the dragon and rescue the princess.
+You can sell loot here! You have:
+You have no loot items to sell.
+
+Exits lead: west to Market, east to Weapon Shop, south to Forest.
+
+true.
+
+22 ?- w.
+Market: Stalls filled with food, drinks, and supplies.
+Vendors call out their prices. You can purchase restored items here.
+Available items:
+- apple (food) - 4 gold (Available: 100)
+- bread (food) - 5 gold (Available: 100)
+- water (drink) - 2 gold (Available: 100)
+- potion (health) - 20 gold (Available: 100)
+Exit east to Adventurer's Hall.
+
+true.
+
+23 ?- buy(bread,10).
+You bought 10 bread for 5*10 gold.
+true.
+
+24 ?- buy(water,10).
+You bought 10 water for 2*10 gold.
+true.
+
+25 ?- buy(potion,10).
+You bought 10 potion for 20*10 gold.
+true.
+
+26 ?- e.
+You are in the Adventurer's Hall.
+Your task is to defeat the dragon and rescue the princess.
+You can sell loot here! You have:
+You have no loot items to sell.
+
+Exits lead: west to Market, east to Weapon Shop, south to Forest.
+
+true.
+
+27 ?- use(bread).
+You eat the bread. Hunger decreased.
+You used bread.
+true.
+
+28 ?- use(water).
+You drink the water. Thirst decreased.
+You used water.
+true.
+
+29 ?- bag.
+=== BAG INVENTORY ===
+oil_lamp (tool) - 1
+potion (health) - 10
+bread (food) - 9
+water (drink) - 9
+true.
+
+30 ?- status.
+=== PLAYER STATUS ===
+Health: 100/100
+Attack: 160
+Defense: 30
+Hunger: 100/100
+Thirst: 100/100
+Gold: 10
+=== PLAYER EQUIPMENTS ===
+Head: iron_helmet
+Body: iron_armor
+Foot: iron_boot
+Left: null
+Right: crystal_sword
+
+true.
+
+31 ?- s.
+Dark Forest: Tall trees create a canopy overhead, filtering the sunlight.
+There seems to be danger hidden here.
+Exits lead: north to Adventurer's Hall, east to River, west to Cave, south to Desert.
+
+Oh no! The slime is charging towards you!
+=== COMBAT START! ===
+You encounter a slime!
+
+=== COMBAT STATUS ===
+Monster: slime
+Monster Health: 10
+Monster Attack: 1
+Monster Defense: 0
+---
+Your Health: 100/100
+Your Attack: 160
+Your Defense: 30
+Your Hunger: 98
+Your Hunger: 97
+
+It's your turn! Commands: attack., escape., use(Item).
+true.
+
+32 ?- attack.
+You deliver the final blow! The slime is defeated!
+Victory!
+You obtained 3 mucus_ball!
+true.
+
+33 ?- w.
+The cave entrance is too dark to see! You need to equip an oil_lamp to enter.
+Perhaps it can be available in the Weapon Shop...
+true.
+
+34 ?- equip(oil_lamp).
+You equipped the oil_lamp to left slot.
+true.
+
+35 ?- w.
+Whispering Cave: A dark opening in the mountainside, cool air wafts from within.
+Strange echoes can be heard from the depths. The sole source of light gave me a little bit of comfort.
+Exit east to Forest. Use d. to explore the depths of the cave.
+Oh no! The bat is charging towards you!
+=== COMBAT START! ===
+You encounter a bat!
+
+=== COMBAT STATUS ===
+Monster: bat
+Monster Health: 5
+Monster Attack: 5
+Monster Defense: 0
+---
+Your Health: 100/100
+Your Attack: 160
+Your Defense: 30
+Your Hunger: 94
+Your Hunger: 91
+
+It's your turn! Commands: attack., escape., use(Item).
+true.
+
+36 ?- attack.
+You deliver the final blow! The bat is defeated!
+Victory!
+You obtained 2 bat_wing!
+true.
+
+37 ?- d.
+
+38 ?- attack.
+You hit the bear for 110 damage!
+Monster health: 390
+It's the monster's turn!
+The bear attacks you for 20 damage!
+Your health: 80
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+39 ?- attack.
+You hit the bear for 110 damage!
+Monster health: 280
+It's the monster's turn!
+The bear attacks you for 20 damage!
+Your health: 60
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+40 ?- attack.
+You hit the bear for 110 damage!
+Monster health: 170
+It's the monster's turn!
+The bear attacks you for 20 damage!
+Your health: 40
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+41 ?- attack.
+The bear dodged your attack!
+It's the monster's turn!
+The bear attacks you for 20 damage!
+Your health: 20
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+42 ?- use(potion).
+You drink the potion, Health restored by 25
+You used potion in combat!
+true.
+
+43 ?- use(potion).
+You drink the potion, Health restored by 25
+You used potion in combat!
+true.
+
+44 ?- attack.
+You hit the bear for 110 damage!
+Monster health: 60
+It's the monster's turn!
+The bear attacks you for 20 damage!
+Your health: 50
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+45 ?- attack.
+You deliver the final blow! The bear is defeated!
+Victory!
+You obtained 1 bearskin!
+The bear has been permanently defeated!
+true.
+
+46 ?- open.
+You opened the treasure chest!
+You obtained:
+- Obsidian Helmet
+- Obsidian Armor
+- Obsidian Boots
+- 500 gold
+Suddenly, the cave starts shaking! The treasure chest triggered a mechanism!
+The cave is collapsing! You need to escape quickly!
+true.
+
+47 ?- u.
+Whispering Cave: A dark opening in the mountainside, cool air wafts from within.
+Strange echoes can be heard from the depths. The sole source of light gave me a little bit of comfort.
+Exit east to Forest. Use d. to explore the depths of the cave.
+true.
+
+48 ?- d.
+The cave entrance has collapsed! You cannot enter anymore.
+true.
+
+49 ?- equip(all).
+You unequipped the iron_helmet from your head.
+You unequipped the iron_armor from your body.
+You unequipped the iron_boot from your foot.
+You unequipped the crystal_sword from your right.
+You equipped the crystal_sword to right slot.
+Equipped the best weapon: crystal_sword (Attack + 150)
+You equipped the obsidian_helmet to head slot.
+Equipped the best headgear: obsidian_helmet (Defense + 65) -> head
+You equipped the obsidian_armor to body slot.
+Equipped the best armor: obsidian_armor (Defense + 30) -> body
+You equipped the obsidian_boot to foot slot.
+Equipped the best footwear: obsidian_boot (Defense + 25) -> foot
+true.
+
+50 ?-
+use(potion).
+You drink the potion, Health restored by 25
+You used potion.
+true.
+
+51 ?- use(potion).
+You drink the potion, Health restored by 25
+You used potion.
+true.
+
+52 ?- use(bread).
+You eat the bread. Hunger decreased.
+You used bread.
+true.
+
+53 ?- use(bread).
+You eat the bread. Hunger decreased.
+You used bread.
+true.
+
+54 ?- use(water).
+You drink the water. Thirst decreased.
+You used water.
+true.
+
+55 ?- use(water).
+You drink the water. Thirst decreased.
+You used water.
+true.
+
+56 ?- e.
+Dark Forest: Tall trees create a canopy overhead, filtering the sunlight.
+There seems to be danger hidden here.
+Exits lead: north to Adventurer's Hall, east to River, west to Cave, south to Desert.
+
+Oh no! The slime is charging towards you!
+=== COMBAT START! ===
+You encounter a slime!
+
+=== COMBAT STATUS ===
+Monster: slime
+Monster Health: 10
+Monster Attack: 1
+Monster Defense: 0
+---
+Your Health: 100/100
+Your Attack: 160
+Your Defense: 125
+Your Hunger: 94
+It's your turn! Commands: attack., escape., use(Item).
+true.
+
+57 ?- attack.
+You deliver the final blow! The slime is defeated!
+Victory!
+You obtained 3 mucus_ball!
+true.
+
+58 ?- s.
+Scorching Desert: A vast expanse of golden sand under the scorching sun.
+You got stuck in the quicksand and fell into the desert maze.
+Only by finding the exit of the maze can one cross the desert...
+
+Watch out! Don't be caught by the guard!
+##############################
+#P..~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#G#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+59 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (2,3)
+Guard position: (5,16)
+Guard moved to (6,16)
+=== GUARD MOVE COMPLETE ===
+##############################
+#.P.~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#G#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+60 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (2,4)
+Guard position: (6,16)
+Guard moved to (7,16)
+=== GUARD MOVE COMPLETE ===
+##############################
+#..P~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~...G#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+61 ?- e.
+You step into quicksand! Breaking free consumed more energy!
+=== GUARD MOVE BY PDDL ===
+Player position: (2,5)
+Guard position: (7,16)
+Guard moved to (7,15)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...P..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~..G.#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+62 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (2,6)
+Guard position: (7,15)
+Guard moved to (7,14)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~P.#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~.G..#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+63 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (2,7)
+Guard position: (7,14)
+Guard moved to (7,13)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~.P#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~G...#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+64 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (3,7)
+Guard position: (7,13)
+Guard moved to (7,12) and is now stuck!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#P#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.G....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+65 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (4,7)
+Guard position: (7,12)
+Guard frees from stuck at (7,12)
+Guard is now free!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#P..#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.G....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+66 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (4,8)
+Guard position: (7,12)
+Guard moved to (7,11)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#.P.#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#G~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+67 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (4,9)
+Guard position: (7,11)
+Guard moved to (6,11)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#..P#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#...G.#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+68 ?- n.
+=== GUARD MOVE BY PDDL ===
+Player position: (3,9)
+Guard position: (6,11)
+Guard moved to (6,10)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#P#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#..G..#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+69 ?- n.
+=== GUARD MOVE BY PDDL ===
+Player position: (2,9)
+Guard position: (6,10)
+Guard moved to (6,9)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#P.~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.G...#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+70 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (2,10)
+Guard position: (6,9)
+Guard moved to (5,9) and is now stuck!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#.P~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#G#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+71 ?- e.
+You step into quicksand! Breaking free consumed more energy!
+=== GUARD MOVE BY PDDL ===
+Player position: (2,11)
+Guard position: (5,9)
+Guard frees from stuck at (5,9)
+Guard is now free!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..P.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#G#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+72 ?- s.
+You step into quicksand! Breaking free consumed more energy!
+=== GUARD MOVE BY PDDL ===
+Player position: (3,11)
+Guard position: (5,9)
+Guard moved to (4,9)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#P##.#.#.~##.#.#~#~.#
+#~.#~#..G#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+73 ?- s.
+You step into quicksand! Breaking free consumed more energy!
+=== GUARD MOVE BY PDDL ===
+Player position: (4,11)
+Guard position: (4,9)
+Guard moved to (3,9)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#G#~##.#.#.~##.#.#~#~.#
+#~.#~#...#P...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+74 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (5,11)
+Guard position: (3,9)
+Guard moved to (4,9)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#..G#~...#...~...#..~.~.#
+#.#....#~#P.#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+75 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (6,11)
+Guard position: (4,9)
+Guard moved to (5,9) and is now stuck!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#G#..#~#.#...#.#.#.#.~#
+#.#.#.#...P.#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+76 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (7,11)
+Guard position: (5,9)
+Guard frees from stuck at (5,9)
+Guard is now free!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#G#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#P~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+77 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (8,11)
+Guard position: (5,9)
+Guard moved to (6,9)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.G...#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#P##.#.#.#.#~#~#.#.##
+#....................~.......X
+##############################
+true.
+
+78 ?- s.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,11)
+Guard position: (6,9)
+Guard moved to (6,10)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#..G..#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#.........P..........~.......X
+##############################
+true.
+
+79 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,12)
+Guard position: (6,10)
+Guard moved to (6,11)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#...G.#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#..........P.........~.......X
+##############################
+true.
+
+80 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,13)
+Guard position: (6,11)
+Guard moved to (7,11)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#G~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#...........P........~.......X
+##############################
+true.
+
+81 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,14)
+Guard position: (7,11)
+Guard moved to (8,11)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#G##.#.#.#.#~#~#.#.##
+#............P.......~.......X
+##############################
+true.
+
+82 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,15)
+Guard position: (8,11)
+Guard moved to (9,11)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#.........G...P......~.......X
+##############################
+true.
+
+83 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,16)
+Guard position: (9,11)
+Guard moved to (9,12)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#..........G...P.....~.......X
+##############################
+true.
+
+84 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,17)
+Guard position: (9,12)
+Guard moved to (9,13)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#...........G...P....~.......X
+##############################
+true.
+
+85 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,18)
+Guard position: (9,13)
+Guard moved to (9,14)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#............G...P...~.......X
+##############################
+true.
+
+86 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,19)
+Guard position: (9,14)
+Guard moved to (9,15)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#.............G...P..~.......X
+##############################
+true.
+
+87 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,20)
+Guard position: (9,15)
+Guard moved to (9,16)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#..............G...P.~.......X
+##############################
+true.
+
+88 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,21)
+Guard position: (9,16)
+Guard moved to (9,17)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#...............G...P~.......X
+##############################
+true.
+
+89 ?- e.
+You step into quicksand! Breaking free consumed more energy!
+=== GUARD MOVE BY PDDL ===
+Player position: (9,22)
+Guard position: (9,17)
+Guard moved to (9,18)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#................G...P.......X
+##############################
+true.
+
+90 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,23)
+Guard position: (9,18)
+Guard moved to (9,19)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#.................G..~P......X
+##############################
+true.
+
+91 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,24)
+Guard position: (9,19)
+Guard moved to (9,20)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#..................G.~.P.....X
+##############################
+true.
+
+92 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,25)
+Guard position: (9,20)
+Guard moved to (9,21)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#...................G~..P....X
+##############################
+true.
+
+93 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,26)
+Guard position: (9,21)
+Guard moved to (9,22) and is now stuck!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................G...P...X
+##############################
+true.
+
+94 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,27)
+Guard position: (9,22)
+Guard frees from stuck at (9,22)
+Guard is now free!
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................G....P..X
+##############################
+true.
+
+95 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,28)
+Guard position: (9,22)
+Guard moved to (9,23)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~G....P.X
+##############################
+true.
+
+96 ?- e.
+=== GUARD MOVE BY PDDL ===
+Player position: (9,29)
+Guard position: (9,23)
+Guard moved to (9,24)
+=== GUARD MOVE COMPLETE ===
+##############################
+#...~..#..~.#...#.~.#...#....#
+#..#~#.#.#~##.#.#.~##.#.#~#~.#
+#~.#~#...#~...#...~...#..~.~.#
+#.#....#~#..#~#.#...#.#.#.#.~#
+#.#.#.#.....#~#.#.#.#.#.#.#..#
+#~....#.~#.~....#.#.#...#...##
+#.#~#.#.~#.##.#.#.#.#~#~#.#.##
+#....................~.G....PX
+##############################
+true.
+
+97 ?- e.
+You find a narrow path leading out of the desert...
+
+Dragon Castle: The ancient dragon's castle.
+It is said that the power of the dragon is extremely strong.
+The princess must be trapped in the attic.
+A huge dragon statue stands in the middle, which seems to be able to rotate...
+
+true.
+
+98 ?- d.
+It seems there is a hidden door leading to the basement. Think of a way to find it...
+true.
+
+99 ?- rotate_statue.
+You rotate the dragon statue. A hidden door to the basement opens!
+true.
+
+100 ?- d.
+You saw a locked treasure chest, so you looked around...
+Several oil paintings are displayed in the basement, seem to depict the stories of past humans slaying dragons...
+You look closer and see four paintings arranged in a row:
+The first painting depicts a baby dragon drinking the river with an adult.
+The second painting depicts a knight fighting a dragon that has six heads in the cave.
+The third painting depicts three dragons circling over the town.
+The last painting depicts five soldiers show the dragon heads in their hands.
+true.
+
+101 ?- enter(1635).
+The password seems incorrect. Let's look for more clues...
+true.
+
+102 ?- enter(2635).
+You unlock the treasure chest!
+You obtained 500 gold.
+You obtained 5 Elixirs(Health + 100).
+You obtained Wind Ring: Attack + 90, Defense + 50).
+true.
+
+103 ?- equip(wind_ring).
+You equipped the wind_ring to left slot.
+true.
+
+104 ?- u.
+Dragon Castle: The ancient dragon's castle.
+It is said that the power of the dragon is extremely strong.
+The princess must be trapped in the attic.
+A huge dragon statue stands in the middle, which seems to be able to rotate...
+
+true.
+
+105 ?- u.
+The princess was trapped in a cage! You try to break the cage.
+The huge commotion alarmed the dragon!
+
+Oh no! The dragon is charging towards you!
+=== COMBAT START! ===
+You encounter a dragon!
+
+=== COMBAT STATUS ===
+Monster: dragon
+Monster Health: 1000
+Monster Attack: 200
+Monster Defense: 150
+---
+Your Health: 100/100
+Your Attack: 250
+Your Defense: 175
+Your Hunger: 74
+Your Hunger: 72
+
+It's your turn! Commands: attack., escape., use(Item).
+true.
+
+106 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 900
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 75
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+107 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 800
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 50
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+108 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 700
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 25
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+109 ?- use(elixir).
+You drink the elixir, Health restored by 100
+You used elixir in combat!
+true.
+
+110 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 600
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 75
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+111 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 500
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 50
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+112 ?- attack.
+The dragon dodged your attack!
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 25
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+113 ?- use(elixir).
+You drink the elixir, Health restored by 100
+You used elixir in combat!
+true.
+
+114 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 400
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 75
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+115 ?- attack.
+The dragon dodged your attack!
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 50
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+116 ?- attack.
+The dragon dodged your attack!
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 25
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+117 ?- use(elixir).
+You drink the elixir, Health restored by 100
+You used elixir in combat!
+true.
+
+118 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 300
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 75
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+119 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 200
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 50
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+120 ?- attack.
+The dragon dodged your attack!
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 25
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+121 ?- use(elixir).
+You drink the elixir, Health restored by 100
+You used elixir in combat!
+true.
+
+122 ?- attack.
+You hit the dragon for 100 damage!
+Monster health: 100
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 75
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+123 ?- attack.
+The dragon dodged your attack!
+It's the monster's turn!
+The dragon attacks you for 25 damage!
+Your health: 50
+It's your turn! Type "attack." to attack or "escape." to try to escape.
+true.
+
+124 ?- attack.
+You deliver the final blow! The dragon is defeated!
+Victory!
+You obtained 1 key!
+The dragon has been permanently defeated!
+Now use the key to rescue the princess! (use_key.)
+true.
+
+125 ?- use_key.
+You used the key to open the cage and successfully rescued the princess!
+=== Game victory! ===
+Congratulations on completing the mission of saving the princess!
