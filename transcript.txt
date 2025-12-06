@@ -338,6 +338,29 @@ You obtained 2 bat_wing!
 true.
 
 37 ?- d.
+Wow! The minerals deep in the cave emitted a beautiful light.
+You see a treasure chest and are about to open it
+Breathing sounds came from behind. Oh no, it was a huge bear!
+Exits lead: up to Cave.
+
+Oh no! The bear is charging towards you!
+=== COMBAT START! ===
+You encounter a bear!
+
+=== COMBAT STATUS ===
+Monster: bear
+Monster Health: 500
+Monster Attack: 50
+Monster Defense: 50
+---
+Your Health: 100/100
+Your Attack: 160
+Your Defense: 30
+Your Hunger: 90
+Your Hunger: 85
+
+It's your turn! Commands: attack., escape., use(Item).
+true.
 
 38 ?- attack.
 You hit the bear for 110 damage!
